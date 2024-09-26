@@ -2,8 +2,10 @@ from typing import Union
 import os
 import ast
 import logging
+import random
+import json
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
 from gridfs import GridFS
@@ -13,8 +15,10 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from src.module1 import search_image, search_product
 from src.module2 import create_prompt, generate_script
 from src.module3 import create_scenes_data, create_movie, generate_video_from_json
+from src.prompt import get_paraphase_prompt
 from src.utils import *
 import src.api_key as api_key
+from src.document import create_document
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,9 +42,9 @@ class Input_User_Request(BaseModel):
     id: str
     prompt: str 
     files: list
-    videoId: str
     slide: bool
     document: bool
+    campaign: bool
     language: str
     timeCreated: str
     
@@ -92,7 +96,7 @@ def generate_video(input_user: Input_User_Request):
     # Get searching product
     # Extracting keyword first
     keywords = model.generate_content(
-        [f'From user input, strictly give me an array containing one or some products inside so I can further searching. For example, you can give an output as : ["product one", "product two"]. The input is: {short_product}'],
+        [f'From user input, strictly give me an array containing one or some products inside so I can further searching. Generate a list with one or more items, without any additional text or explanation, listing only the items. The input is: {short_product}'],
         safety_settings={
             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -102,63 +106,80 @@ def generate_video(input_user: Input_User_Request):
     )
     try:
         logger.info(keywords.text)
-        keywords = ast.literal_eval(keywords.text[7:-5])
+        keywords = ast.literal_eval(keywords.text)
         product_info = search_product(short_product)
-        content = [product_info['results'][i]['content'] for i in range(5)]
+        content = [str(product_info['results'][i]['content']) for i in range(5)]
     except:
         logger.info("An error happened when get content array as result of searching. Set content array empty")
         content = []
     logger.info("Content: ", content)
 
-    gemini_prompt = create_prompt(short_product, brand_info, content)
-
-    script = generate_script(model, gemini_prompt)
-
-    images = search_image(script['keyword'][0])
-    images = image_online_paths + images
-
-    movie = create_movie(create_scenes_data(script, images))
-
-    video = generate_video_from_json(movie)
-    # TODO: Process slide and document
-
-    if video:
-        return {
-            "videoId": input_user.videoId,
-            "video": video,
-            "jsonVideo": json.dumps(movie),
-            "slide": None,
-            "document": None
-        }
+    if input_user.campaign:
+        iteration = 2
+        # Create a campaign description
+        campaign_description = model.generate_content(
+            [f'Make some text, around 5 sentences, as a campaign description from the input intended by user. It should include our intention of video, how long we should run with the generated videos from campaign, and some other guidance. The input is: {short_product}'],
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        ).text
     else:
-        return {
-            "videoId": None,
-            "video": None,
-            "jsonVideo": None,
+        campaign_description = None
+        iteration = 1
+    
+    result_json =  {
+            "campaign": input_user.campaign,
+            "campaignDescription": campaign_description,
+            "videos": [],
             "slide": None,
             "document": None
         }
+    for i in range(iteration):
 
+        gemini_prompt = create_prompt(short_product, brand_info, content)
 
-# product="""Bia Hơi Hà Nội - Thùng 24 lon 500ml - Phiên bản Tết
-# Thông tin sản phẩm
-# • Dung tích: 500ml/lon
-# • Nồng độ cồn: 4.1 ± 0.4%
-# • Thành phần: nước, mạch nha, gạo, đường, hoa Houblon
-# • HSD: 5 tháng kể từ ngày sản xuất
-# HABECO - Thương hiệu đồ uống hàng đầu Việt Nam
-# Những dòng sản phẩm nổi tiếng làm nên thương hiệu Habeco có thể kể đến như Bia hơi Hà Nội, Bia lon Hà Nội, Bia Trúc Bạch, Hanoi Beer Premium… Với bí quyết công nghệ - truyền thống gần 130 năm, hệ thống thiết bị hiện đại, đội ngũ cán bộ công nhân viên lành nghề, các sản phẩm của HABECO đã trở thành niềm tự hào của thương hiệu Việt và được phân phối rộng rãi tới các thị trường nước ngoài như Đài Loan, Hàn Quốc, Anh, Đức, Mỹ,...
-# Bia Hơi Hà Nội: Một nét văn hoá Hà Nội
-# Bia Hơi Hà Nội ra đời và phát triển cùng những năm tháng thăng trầm của Thủ Đô Ngàn Năm Văn Hiến. Đổi thay qua từng ngày, những sản phẩm mới của Bia Hơi Hà Nội đã được ra mắt và phổ cập trên thị trường để nét văn hoá này ngày càng đẹp hơn, càng gần gũi với tất cả các thế hệ.
-# Lưu ý và bảo quản
-# • Sản phẩm dành cho người trên 18 tuổi
-# • Không dành cho phụ nữ đang mang thai
-# • Thưởng thức có trách nhiệm, đã uống đồ uống có cồn thì không lái xe
-# • Ngon hơn khi uống lạnh (10-15̊C)
-# • Bảo quản nơi khô ráo, sạch sẽ, thoáng mát, tránh ánh nắng mặt trời (<25̊C). Nếu mở lon phải dùng ngay hoặc bảo quản lạnh nếu muốn dùng lâu"""
+        script = generate_script(model, gemini_prompt)
+
+        if i > 0:
+            script = generate_script(model, get_paraphase_prompt(script))
+
+        logger.info(script)
+
+        images = search_image(script['keyword'][0])
+        random.shuffle(images)
+
+        images = image_online_paths + images
+
+        movie = create_movie(create_scenes_data(script, images))
+
+        video = generate_video_from_json(movie)
+        if video:
+            result_json['videos'].append({"video": video,
+                                        "jsonVideo": json.dumps(movie)})
+        
+    # TODO: Process slide
+    if input_user.document:
+        try:
+            document_path = create_document(model, input_user.prompt, content)
+            result_json['document'] = document_path
+        except:
+            logger.info("An error happened when process document")
+        
+    logger.info(result_json)
+    return result_json
+
+    
 
 @app.get(f"/download")
 async def download_file(dfl: str):
     filename = dfl.path
     if filename[-4:] == "pptx":
-        return FileResponse(path=filename, filename=filename, media_type='application/zip')
+        return FileResponse(path=filename, filename=filename, media_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+    elif filename[-4:] == "docx":
+        return FileResponse(path=filename, filename=filename, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    else:
+        # Raise a 400 error if the file type is not supported
+        raise HTTPException(status_code=400, detail="Unsupported file type. Only .pptx and .docx are allowed.")

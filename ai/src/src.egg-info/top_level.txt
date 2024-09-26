@@ -1,4 +1,12 @@
 __init__
+add_image
+api_key
+assets
+document
+main
 module1
 module2
+module3
 prompt
+temp
+utils

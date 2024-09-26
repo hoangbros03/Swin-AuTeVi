@@ -29,3 +29,11 @@ def get_info_prompt(short_product, brand_info, response_content):
     \"\"\""""
 
     return prompt
+
+def get_paraphase_prompt(before_response):
+    prompt = f"""Please rephase every sentences in this json, and output exactly like that below response as json:
+    \"\"\"
+    {before_response}
+    \"\"\""""
+
+    return prompt
