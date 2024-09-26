@@ -59,7 +59,7 @@ def generate_video(input_user: Input_User_Request):
             os.rename(f"./temp/{file_info['id']}", f"./temp/{file_info['id']}.pdf")
             # TODO: Handle import to DB to further RAG
         elif file_info['type'].split("/")[0] == "image":
-            new_name = f"./temp/{file_info['id']}.{file_info['type'].split("/")[-1]}"
+            new_name = f"./temp/{file_info['id']}.{file_info['type'].split('/')[-1]}"
             os.rename(f"./temp/{file_info['id']}", new_name)
             try:
                 image_upload_status = upload_image(api_key.IMGBB_API, new_name)
