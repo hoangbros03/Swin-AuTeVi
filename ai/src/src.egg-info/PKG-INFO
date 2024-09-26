@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: src
+Version: 1.0
+Summary: abc
+Home-page: https://google.com
+Author: Tran Ba Hoang
+Author-email: hoangtb203@gmail.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
