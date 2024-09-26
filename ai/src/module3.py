@@ -1,6 +1,8 @@
 import requests
 import time
 
+import src.api_key as api_key
+
 def gen_scene(scene_id, text, voice=None, subtitle=None, image_url=None, default_duration=3, fade_out=0.5):
     """
     Generates a single scene in JSON format with text, optional voice, and optional background image.
@@ -164,16 +166,16 @@ def create_movie(scenes_data,video_id="", comment=""):
     )
     return movie
 
-def generate_video(movie):
+def generate_video_from_json(movie):
     # API key
-    api_key = 'G3FaQrzqHw6opNwxSgmAc6qPmz31S8JS69S8vPTK'
+    json2video_api_key = api_key.JSON2VIDEO_API
 
     # API endpoint for movie rendering
     API_ENDPOINT = 'https://api.json2video.com/v2/movies'
 
     # Submit the request to the API with the API key in the headers
     headers = {
-        'x-api-key': api_key
+        'x-api-key': json2video_api_key
     }
 
     response = requests.post(API_ENDPOINT, json=movie, headers=headers)
@@ -194,13 +196,14 @@ def generate_video(movie):
                 print("Movie rendering finished!")
                 print('Link video: ', get_data['movie']['url'])
                 return get_data['movie']['url']
-                break
+                
             elif get_data['movie']['status'] == 'error':
                 print("Error rendering movie:", get_data['movie']['message'])
-                return get_data['movie']['message']
-                break
-            
+                # return get_data['movie']['message']
+                return None
+                
             time.sleep(5)
     else:
         print("Failed to start rendering:", response.text)
-        return response.text
+        # return response.text
+        return None

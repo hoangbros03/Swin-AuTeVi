@@ -1,6 +1,6 @@
 def get_info_prompt(short_product, brand_info, response_content):
     prompt = f"""
-    imagine you are a director and you need to make a small marketing video about this product:
+    imagine you are a director and you need to make a small marketing video about a product from this user prompt:
     \"\"\"
     {short_product}
     \"\"\"

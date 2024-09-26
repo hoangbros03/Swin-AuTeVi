@@ -1,15 +1,14 @@
 import google.generativeai as genai
 import os
 import json
-from prompt import get_info_prompt
+from src.prompt import get_info_prompt
+import src.api_key as api_key
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 def create_prompt(short_product, brand_info, content):
     return get_info_prompt(short_product, brand_info, content)
 
-def generate_script(prompt):
-    genai.configure(api_key='')
-    model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+def generate_script(model, prompt):
 
     response = model.generate_content(
         [prompt],

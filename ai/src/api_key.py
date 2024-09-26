@@ -1,0 +1,5 @@
+JSON2VIDEO_API = 'G3FaQrzqHw6opNwxSgmAc6qPmz31S8JS69S8vPTK'
+TAVILY_API = ""
+GEMINI_API = ''
+IMGBB_API=""
+DB_LINK="mongodb://localhost:27017/"
