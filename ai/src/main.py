@@ -1,6 +1,7 @@
 from typing import Union
 import os
 import ast
+import logging
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -15,16 +16,24 @@ from src.module3 import create_scenes_data, create_movie, generate_video_from_js
 from src.utils import *
 import src.api_key as api_key
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
 create_folder("temp")
 client = MongoClient(api_key.DB_LINK)  
 db = client['autevi']
 fs = GridFS(db)
 
+try:
+    client.admin.command('ping')
+    print('MongoDB connection successful!')
+except Exception as e:
+    print(f'MongoDB connection failed: {e}')
 
 genai.configure(api_key=api_key.GEMINI_API)
 model = genai.GenerativeModel(model_name='gemini-1.5-flash')
-
+logger.info("Rat la ok")
 class Input_User_Request(BaseModel):
     id: str
     prompt: str 
@@ -42,18 +51,18 @@ class Download_From_Local(BaseModel):
 def generate_video(input_user: Input_User_Request):
     # Empty folder if needed
     empty_folder("temp")
-    print("Temp folder is fresh and ready to process")
+    logger.info("Temp folder is fresh and ready to process")
 
     # Receive user files (download): 1pdf, n jpg
-    print(input_user)
+    logger.info(input_user)
     rag_info = []
     image_online_paths = []
     for idx, file_info in enumerate(input_user.files):
-        print(f"Considering file {idx+1} of user")
+        logger.info(f"Considering file {idx+1} of user")
         try:
             result = get_file_from_db(fs, file_info['id'], f"./temp/{file_info['id']}")
         except:
-            print("An error happened when get from db. Skip this file.")
+            logger.info("An error happened when get from db. Skip this file.")
             continue
         if file_info['type'].split("/")[-1] == "pdf":
             os.rename(f"./temp/{file_info['id']}", f"./temp/{file_info['id']}.pdf")
@@ -64,11 +73,11 @@ def generate_video(input_user: Input_User_Request):
             try:
                 image_upload_status = upload_image(api_key.IMGBB_API, new_name)
             except:
-                print("An error happened upload image to imgbb. Skip this file.")
+                logger.info("An error happened upload image to imgbb. Skip this file.")
                 continue
             image_online_paths.append(image_upload_status['data']['url'])
     
-    print("Now we defined some default info")
+    logger.info("Now we defined some default info")
 
     brand_info="""
     Brand mission and value: N/a
@@ -92,21 +101,14 @@ def generate_video(input_user: Input_User_Request):
         }
     )
     try:
-        print(keywords.text)
+        logger.info(keywords.text)
         keywords = ast.literal_eval(keywords.text[7:-5])
         product_info = search_product(short_product)
         content = [product_info['results'][i]['content'] for i in range(5)]
     except:
-        print("An error happened when get content array as result of searching. Set content array empty")
+        logger.info("An error happened when get content array as result of searching. Set content array empty")
         content = []
-    print("Content: ", content)
-    # if True:
-    #     return {
-    #         "videoId": "ratok",
-    #         "video": "ratok",
-    #         "slide": None,
-    #         "document": None
-    #     }
+    logger.info("Content: ", content)
 
     gemini_prompt = create_prompt(short_product, brand_info, content)
 
@@ -124,6 +126,7 @@ def generate_video(input_user: Input_User_Request):
         return {
             "videoId": input_user.videoId,
             "video": video,
+            "jsonVideo": json.dumps(movie),
             "slide": None,
             "document": None
         }
@@ -131,6 +134,7 @@ def generate_video(input_user: Input_User_Request):
         return {
             "videoId": None,
             "video": None,
+            "jsonVideo": None,
             "slide": None,
             "document": None
         }

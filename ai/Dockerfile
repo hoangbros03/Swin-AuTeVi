@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 6969
 
 # Command to run the FastAPI app
-CMD ["fastapi", "dev", "src/main.py", "--port", "6969"]
+CMD ["fastapi", "run", "src/main.py", "--host", "0.0.0.0", "--port", "6969"]
