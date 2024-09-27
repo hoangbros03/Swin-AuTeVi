@@ -156,14 +156,15 @@ def generate_video(input_user: Input_User_Request):
 
         images = image_online_paths + images
 
-        movie = create_movie(create_scenes_data(script, images))
-        slide_content = movie
+        # movie = create_movie(create_scenes_data(script, images))
+        # slide_content = movie
+        slide_content=create_scenes_data(script, images)
+        movie = create_movie(slide_content)
         video = generate_video_from_json(movie)
         if video:
             result_json['videos'].append({"video": video,
                                         "jsonVideo": json.dumps(movie)})
         
-    # TODO: Process slide
     if input_user.slide and slide_content:
         try:
             slide_path = create_slide(slide_content)

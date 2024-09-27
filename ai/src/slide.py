@@ -4,6 +4,10 @@ import requests
 import os
 from io import BytesIO
 from PIL import Image
+import logging 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Function to create a PPTX presentation from given data
 def create_slide(data, output_path="presentation.pptx"):
@@ -53,7 +57,7 @@ def create_slide(data, output_path="presentation.pptx"):
                 # Add the image to the slide, positioned at the center-right
                 slide.shapes.add_picture(img_buffer, Inches(6), img_top, width=Inches(3))
             except Exception as e:
-                print(f"Error adding image from {image_url}: {e}")
+                logger.info(f"Error adding image from {image_url}: {e}")
 
     # Save the PowerPoint presentation
     prs.save(output_path)

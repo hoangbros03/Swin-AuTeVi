@@ -4,6 +4,10 @@ import json
 from src.prompt import get_info_prompt
 import src.api_key as api_key
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def create_prompt(short_product, brand_info, content):
     return get_info_prompt(short_product, brand_info, content)
