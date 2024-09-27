@@ -1,6 +1,6 @@
 import os
 
-JSON2VIDEO_API = 'Liq78Ys74U1gPmOlXYex6aL0Q8CJsbWP6tbKelzq'
+JSON2VIDEO_API = ''
 TAVILY_API = ""
 GEMINI_API = ''
 IMGBB_API=""
