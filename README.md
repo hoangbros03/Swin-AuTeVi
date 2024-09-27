@@ -1,4 +1,4 @@
-![alt text]([http://url/to/img.png](https://i.ibb.co/crxmFM6/image.png))
+![alt text](imgs/20.png)
 # AuTeVi - Automatic Text to Video for multimedia distribution
 
 A powerful solution, driven by LLMs and a Multi-Agent System, designed to automate the creation of videos, presentations, and documents for various use cases.
