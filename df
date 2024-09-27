@@ -1,0 +1,47 @@
+[33mcommit c52321ab01f9511963b29a05ed78341aa7fc2755[m[33m ([m[1;36mHEAD -> [m[1;32mslide[m[33m)[m
+Author: lataonhehe <21020395@vnu.edu.vn>
+Date:   Fri Sep 27 09:22:26 2024 +0700
+
+    fix gen_vid
+
+[33mcommit bbb92ae191131a867aedfc958bb1584d7773b0bc[m[33m ([m[1;31morigin/slide[m[33m)[m
+Author: lataonhehe <21020395@vnu.edu.vn>
+Date:   Fri Sep 27 07:27:34 2024 +0700
+
+    add slide
+
+[33mcommit 43dfcde86a5a322ad0b6ef05db0bffa86444fe64[m
+Author: Trần Bá Hoàng <87892619+hoangbros03@users.noreply.github.com>
+Date:   Thu Sep 26 23:46:00 2024 +0000
+
+    add
+
+[33mcommit 4bf57742635b00d12a13e806a9ac0d7bd1204eb5[m
+Author: Trần Bá Hoàng <87892619+hoangbros03@users.noreply.github.com>
+Date:   Thu Sep 26 21:45:19 2024 +0000
+
+    fix bug
+
+[33mcommit a5126ab5b95d9051eef2cdbd7dca2ffbfd2171d7[m
+Author: Trần Bá Hoàng <87892619+hoangbros03@users.noreply.github.com>
+Date:   Thu Sep 26 18:27:27 2024 +0000
+
+    add docker
+
+[33mcommit 3b518f86d4340b5fa4afe818a48d6e38489c3639[m
+Author: Trần Bá Hoàng <87892619+hoangbros03@users.noreply.github.com>
+Date:   Thu Sep 26 18:09:02 2024 +0000
+
+    ok
+
+[33mcommit 14819c683ff3c6f3d1f87c7fdd41761ce65b61f6[m
+Author: Nguyễn Minh Tuấn <100214426+lataonhehe@users.noreply.github.com>
+Date:   Thu Sep 26 14:50:29 2024 +0000
+
+    add basic code
+
+[33mcommit 5f9b435f28ee8806824f02cf91808bfe71f6ef64[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: hoangbros03 <87892619+hoangbros03@users.noreply.github.com>
+Date:   Thu Sep 26 13:33:27 2024 +0700
+
+    first commit

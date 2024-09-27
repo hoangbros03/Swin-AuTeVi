@@ -12,3 +12,4 @@ boto3
 langchain
 langchain-community
 langchain-aws
+python-pptx
