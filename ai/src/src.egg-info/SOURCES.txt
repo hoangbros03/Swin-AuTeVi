@@ -9,6 +9,8 @@ src/module1.py
 src/module2.py
 src/module3.py
 src/prompt.py
+src/rag.py
+src/slide.py
 src/utils.py
 src/src.egg-info/PKG-INFO
 src/src.egg-info/SOURCES.txt
