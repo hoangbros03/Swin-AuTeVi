@@ -19,7 +19,7 @@ from src.prompt import get_paraphase_prompt
 from src.utils import *
 import src.api_key as api_key
 from src.document import create_document
-
+from src.slide import create_slide
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -131,6 +131,8 @@ def generate_video(input_user: Input_User_Request):
         campaign_description = None
         iteration = 1
     
+    slide_content = None
+
     result_json =  {
             "campaign": input_user.campaign,
             "campaignDescription": campaign_description,
@@ -155,13 +157,20 @@ def generate_video(input_user: Input_User_Request):
         images = image_online_paths + images
 
         movie = create_movie(create_scenes_data(script, images))
-
+        slide_content = movie
         video = generate_video_from_json(movie)
         if video:
             result_json['videos'].append({"video": video,
                                         "jsonVideo": json.dumps(movie)})
         
     # TODO: Process slide
+    if input_user.slide and slide_content:
+        try:
+            slide_path = create_slide(slide_content)
+            result_json['slide'] = slide_path
+        except:
+            logger.info("An error happened when process slide")
+
     if input_user.document:
         try:
             document_path = create_document(model, input_user.prompt, content)
