@@ -60,9 +60,9 @@ EMBED_MODEL_ID = 'XXXXX' # To use RAG powered with AWS Bedrock
 
 ## Demo
 
-![Demo photo 1](https://i.ibb.co/hYL07nc/31.png)
-![Demo photo 2](https://i.ibb.co/CH4WBhW/32.png)
-![Demo photo 3](https://i.ibb.co/yn2wWS6/33.png)
+![Demo photo 1](imgs/31.png)
+![Demo photo 2](imgs/32.png)
+![Demo photo 3](imgs/33.png)
 ## Acknowledgements
 
 This quick prototype was developed during the 24-hour coding session of the Swin Hackathon 2024. We aimed to create a functional, feasible, and visually appealing prototype. A big thanks to our teammates and the organizers!
