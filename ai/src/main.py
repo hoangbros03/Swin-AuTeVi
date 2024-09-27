@@ -155,8 +155,8 @@ def generate_video(input_user: Input_User_Request):
 
         images = image_online_paths + images
 
-        movie = create_movie(create_scenes_data(script, images))
-        slide_content = movie
+        slide_content=create_scenes_data(script, images)
+        movie = create_movie(slide_content, language=input_user.language)
         video = generate_video_from_json(movie)
         if video:
             result_json['videos'].append({"video": video,
