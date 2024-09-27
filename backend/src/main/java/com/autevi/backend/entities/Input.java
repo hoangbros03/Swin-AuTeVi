@@ -8,6 +8,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "inputs")
 public class Input {
+    private String campaign;
+
+    public String getCampaign() {
+        return campaign;
+    }
+
+    public void setCampaign(String campaign) {
+        this.campaign = campaign;
+    }
     private String id;
 
     private String prompt;

@@ -15,7 +15,7 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from src.module1 import search_image, search_product
 from src.module2 import create_prompt, generate_script
 from src.module3 import create_scenes_data, create_movie, generate_video_from_json
-from src.prompt import get_paraphase_prompt
+from src.prompt import get_paraphase_prompt, get_compress_prompt
 from src.utils import *
 import src.api_key as api_key
 from src.document import create_document

@@ -27,6 +27,10 @@ public class GridFSService {
         return gridFsTemplate.store(fileInputStream, filename);
     }
 
+    public ObjectId storeFile(InputStream inputStream, String filename) throws IOException {
+        return gridFsTemplate.store(inputStream, filename);
+    }
+
 
     public ObjectId storeFile(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();

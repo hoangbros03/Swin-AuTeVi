@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/videos")
@@ -111,12 +112,14 @@ public class VideoController {
         input.setSlide(slide);
         input.setDocument(document);
         input.setId("yeah boy");
+    
         
         Video video = new Video();
         video.setName(name);
         video.setInput(input);
         input.setVideoId("1233");
-        String videoUrl = videoService.sendInputToEndpoint(input, "http://localhost:6969/generate_video");
+        input.setCampaign("false");
+        String videoUrl = videoService.sendInputToEndpoint(input, "http://127.0.0.1:6969/generate_video");
         video.setUrl(videoService.downloadAndStoreVideo(videoUrl));
         Video createdVideo = videoService.createVideo(video);
         return new ResponseEntity<>(createdVideo, HttpStatus.CREATED);
@@ -141,5 +144,20 @@ public class VideoController {
     public ResponseEntity<Void> deleteAllVideos() {
         videoService.deleteAllVideos();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("Please select a file to upload", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            InputStream fileInputStream = file.getInputStream(); // Use InputStream directly
+            ObjectId fileId = gridFSService.storeFile(fileInputStream, file.getOriginalFilename());
+            return new ResponseEntity<>("File uploaded successfully. File ID: " + fileId.toString(), HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Failed to upload file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
