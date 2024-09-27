@@ -37,6 +37,7 @@ except Exception as e:
 
 genai.configure(api_key=api_key.GEMINI_API)
 model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+
 logger.info("Rat la ok")
 class Input_User_Request(BaseModel):
     id: str

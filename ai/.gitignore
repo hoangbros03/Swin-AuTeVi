@@ -9,6 +9,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+src.egg-info/
+temp/
 develop-eggs/
 dist/
 downloads/
