@@ -24,7 +24,7 @@ const Navbar = () => {
           <Button disableRipple color="inherit" href="/">Home</Button>
           <Button disableRipple color="inherit" href="/campaign">Campaign</Button>
           <Button disableRipple color="inherit" href="/video">Video</Button>
-          <Button disableRipple color="inherit" href="/about">Documentation</Button>
+          <Button disableRipple color="inherit" href="/document">Documentation</Button>
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button color="inherit" href="/login">Log In</Button>

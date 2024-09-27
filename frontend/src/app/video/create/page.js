@@ -7,27 +7,70 @@ import {
     Button,
     Typography,
     Paper,
-    Stack
+    Stack,
+    Radio
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Footer from '../../components/Footer';
+import LanguageDetect from 'languagedetect';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import PendingPage from '@/app/components/Pending';
 
 const CreateVideo = () => {
     const [prompt, setPrompt] = useState('');
     const [files, setFiles] = useState([]);
+    const [lang, setLang] = useState("English");
+    const [slide, setSlide] = useState(false);
+    const [document, setDocument] = useState(false);
+    const [isPending, setIsPending] = useState(false);
+    const [name, setName] = useState('');
+    const detector = new LanguageDetect();
+    const router = useRouter();
 
     const handlePromptChange = (event) => {
         setPrompt(event.target.value);
+        const detectedLang = detector.detect(event.target.value);
+        const englishScore = detectedLang.find(lang => lang[0].toLowerCase() === 'english')?.[1] || 0;
+        const vietnameseScore = detectedLang.find(lang => lang[0].toLowerCase() === 'vietnamese')?.[1] || 0;
+        setLang(englishScore >= vietnameseScore ? "English" : "Vietnamese");
     };
 
     const handleFileUpload = (event) => {
         setFiles([...files, ...event.target.files]);
     };
 
-    const handleCreate = () => {
-        // Handle video creation logic here
-        console.log('Creating video with prompt:', prompt);
-        console.log('Uploaded files:', files);
+    const handleCreate = async () => {
+        setIsPending(true);
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('prompt', prompt);
+        formData.append('language', lang);
+        formData.append('slide', slide.toString());
+        formData.append('document', document.toString());
+        files.forEach((file, index) => {
+            formData.append(`files`, file);
+        });
+
+        try {
+            console.log(formData);
+            const response = await axios.post(`http://127.0.0.1:8080/api/videos`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            const video = response.data;
+            console.log('Video created:', JSON.stringify(video));
+            router.push({
+                pathname: '/video/view',
+                query: { video: JSON.stringify(video) },
+            });
+        } catch (error) {
+            console.error('Error creating video:', error);
+            setIsPending(false);
+            // Handle the error appropriately
+        }
     };
 
     const handleCancel = () => {
@@ -38,6 +81,10 @@ const CreateVideo = () => {
     const handleRemoveFile = (index) => {
         setFiles(files.filter((_, i) => i !== index));
     };
+
+    if (isPending) {
+        return <PendingPage />;
+    }
 
     return (
         <Container component="main" maxWidth={false} sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100vw' }}>
@@ -52,6 +99,14 @@ const CreateVideo = () => {
                     <div style={{ height: 30 }} />
                     <TextField
                         fullWidth
+                        variant="outlined"
+                        label="Video Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        sx={{ mb: 3 }}
+                    />
+                    <TextField
+                        fullWidth
                         multiline
                         rows={6}
                         variant="outlined"
@@ -60,6 +115,28 @@ const CreateVideo = () => {
                         onChange={handlePromptChange}
                         sx={{ mb: 3 }}
                     />
+                    <Button
+                        variant="outlined"
+                        sx={{ mb: 3, mr: 2 }}
+                    >
+                        Language: {lang}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ mb: 3, mr: 2 }}
+                        onClick={() => setSlide(!slide)}
+                        startIcon={<Radio checked={slide} />}
+                    >
+                        Make Slide
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ mb: 3, mr: 2 }}
+                        onClick={() => setDocument(!document)}
+                        startIcon={<Radio checked={document} />}
+                    >
+                        Make Document
+                    </Button>
                     <Button
                         variant="contained"
                         component="label"

@@ -28,12 +28,32 @@ const AddCard = styled(VideoCard)(({ theme }) => ({
 
 
 const VideoPage = () => {
-  // Mock data for videos
-  const videos = [
-    { id: 1, name: 'Video 1', dateCreated: '2023-05-01' },
-    { id: 2, name: 'Video 2', dateCreated: '2023-05-05' },
-    { id: 3, name: 'Video 3', dateCreated: '2023-05-10' },
-  ];
+  const [videos, setVideos] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8080/api/videos');
+        if (!response.ok) {
+          throw new Error('Failed to fetch videos');
+        }
+        const data = await response.json();
+        const videoObjects = data.map(videoData => new Video(
+          videoData.id,
+          videoData.url,
+          videoData.jsonObject,
+          videoData.description,
+          videoData.input
+        ));
+        setVideos(videoObjects);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+        // Handle the error appropriately, e.g., show an error message to the user
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   return (
     <Container component="main" maxWidth={false} sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100vw' }}>
@@ -55,11 +75,11 @@ const VideoPage = () => {
             </AddCard>
           </Box>
           {videos.map((video) => (
-            <Box key={video.id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <Box key={video.getId()} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <VideoCard sx={{ height: 180, width: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h6">{video.name}</Typography>
+                <Typography variant="h6">{video.getInput().prompt.substring(0, 20)}...</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Created: {video.dateCreated}
+                  ID: {video.getId()}
                 </Typography>
               </VideoCard>
             </Box>

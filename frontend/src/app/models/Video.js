@@ -3,7 +3,6 @@ class Video {
     this.id = id;
     this.url = url;
     this.jsonObject = jsonObject;
-    this.description = description;
     this.input = input;
   }
 
@@ -28,17 +27,8 @@ class Video {
     this.jsonObject = jsonObject;
   }
 
-  setDescription(description) {
-    if (typeof description !== 'string') {
-      throw new Error('Description must be a string');
-    }
-    this.description = description;
-  }
 
   setInput(input) {
-    if (!(input instanceof Input)) {
-      throw new Error('Input must be an instance of Input class');
-    }
     this.input = input;
   }
 
@@ -54,13 +44,9 @@ class Video {
     return { ...this.jsonObject };
   }
 
-  getDescription() {
-    return this.description;
-  }
-
   getInput() {
     return this.input;
-  }
+  } 
 }
 
 export default Video;
