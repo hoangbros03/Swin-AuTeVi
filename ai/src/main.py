@@ -177,10 +177,11 @@ def generate_video(input_user: Input_User_Request):
 @app.get(f"/download")
 async def download_file(dfl: str):
     filename = dfl.path
-    if filename[-4:] == "pptx":
-        return FileResponse(path=filename, filename=filename, media_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
-    elif filename[-4:] == "docx":
-        return FileResponse(path=filename, filename=filename, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    else:
-        # Raise a 400 error if the file type is not supported
-        raise HTTPException(status_code=400, detail="Unsupported file type. Only .pptx and .docx are allowed.")
+    # if filename[-4:] == "pptx":
+    #     return FileResponse(path=filename, filename=filename, media_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
+    # elif filename[-4:] == "docx":
+    #     return FileResponse(path=filename, filename=filename, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    # else:
+    #     # Raise a 400 error if the file type is not supported
+    #     raise HTTPException(status_code=400, detail="Unsupported file type. Only .pptx and .docx are allowed.")
+    return FileResponse(filename)
