@@ -141,8 +141,10 @@ def generate_video(input_user: Input_User_Request):
             "document": None
         }
     for i in range(iteration):
-
-        gemini_prompt = create_prompt(short_product, brand_info, content)
+        if input_user.language == "en":
+            gemini_prompt = create_prompt(short_product, brand_info, content, language="English")
+        else:
+            gemini_prompt = create_prompt(short_product, brand_info, content)
 
         script = generate_script(model, gemini_prompt)
 

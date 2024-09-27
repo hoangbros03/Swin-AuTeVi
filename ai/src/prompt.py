@@ -1,4 +1,4 @@
-def get_info_prompt(short_product, brand_info, response_content):
+def get_info_prompt(short_product, brand_info, response_content, language="Vietnamese"):
     prompt = f"""
     imagine you are a director and you need to make a small marketing video about a product from this user prompt:
     \"\"\"
@@ -25,7 +25,7 @@ def get_info_prompt(short_product, brand_info, response_content):
     }},
     ]
     }}
-    Please give me a valid json object and use Vietnamese.
+    Please give me a valid json object and use {language}.
     \"\"\""""
 
     return prompt

@@ -9,8 +9,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def create_prompt(short_product, brand_info, content):
-    return get_info_prompt(short_product, brand_info, content)
+def create_prompt(short_product, brand_info, content, language="Vietnamese"):
+    return get_info_prompt(short_product, brand_info, content, language)
 
 def generate_script(model, prompt):
     while True:
