@@ -149,6 +149,10 @@ def generate_video(input_user: Input_User_Request):
         if i > 0:
             script = generate_script(model, get_paraphase_prompt(script))
 
+        # Compress
+        if len([*str(script)]) >= 1300:
+            script = generate_script(model, get_compress_prompt(script))
+
         logger.info(script)
 
         images = search_image(script['keyword'][0])
