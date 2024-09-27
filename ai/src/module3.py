@@ -3,7 +3,7 @@ import time
 
 import src.api_key as api_key
 
-def gen_scene(scene_id, text, voice=None, subtitle=None, image_url=None, default_duration=3, fade_out=0.5):
+def gen_scene(scene_id, text, voice=None, subtitle=None, image_url=None, language="vi", default_duration=3, fade_out=0.5):
     """
     Generates a single scene in JSON format with text, optional voice, and optional background image.
     
@@ -56,12 +56,16 @@ def gen_scene(scene_id, text, voice=None, subtitle=None, image_url=None, default
         }
         )
 
+    voiceName = "vi-VN-HoaiMyNeural"
+    if language == "en":
+        voiceName = "en-US-AmandaMultilingualNeural"
+    
     # Add voice element if provided
     if voice:
         elements.append({
             "id": f"voice_{scene_id}",
             "type": "voice",
-            "voice": "vi-VN-HoaiMyNeural",  
+            "voice": voiceName,  
             "text": voice,
             "start": 1,
         })
@@ -75,7 +79,7 @@ def gen_scene(scene_id, text, voice=None, subtitle=None, image_url=None, default
     }
 
 
-def create_video_json(video_id, comment, width, height, quality, resolution, scenes_data, audio_url=None):
+def create_video_json(video_id, comment, width, height, quality, resolution, scenes_data, audio_url=None, language="vi"):
     """
     Creates a full video JSON structure, including scenes and optional background audio.
     
@@ -99,7 +103,7 @@ def create_video_json(video_id, comment, width, height, quality, resolution, sce
         subtitle = scene.get("subtitle", None)
         image_url = scene.get("image_url", None)
         
-        scenes.append(gen_scene(scene_id, text, voice, subtitle, image_url))
+        scenes.append(gen_scene(scene_id, text, voice, subtitle, image_url, language))
 
     # Optional audio element
     elements = []
@@ -153,7 +157,7 @@ def create_scenes_data(text_script, image_script):
 
     return scenes_data
 
-def create_movie(scenes_data,video_id="", comment=""):
+def create_movie(scenes_data, video_id="", comment="", language="vi"):
     movie = create_video_json(
         video_id=video_id, 
         comment=comment, 
@@ -162,7 +166,8 @@ def create_movie(scenes_data,video_id="", comment=""):
         quality="high", 
         resolution="squared",
         audio_url="https://assets.json2video.com/assets/audios/advertime.mp3",
-        scenes_data=scenes_data    
+        scenes_data=scenes_data,
+        language=language
     )
     return movie
 
