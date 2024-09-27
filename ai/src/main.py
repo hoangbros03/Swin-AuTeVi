@@ -15,7 +15,7 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from src.module1 import search_image, search_product
 from src.module2 import create_prompt, generate_script
 from src.module3 import create_scenes_data, create_movie, generate_video_from_json
-from src.prompt import get_paraphase_prompt
+from src.prompt import get_paraphase_prompt, get_compress_prompt
 from src.utils import *
 import src.api_key as api_key
 from src.document import create_document
@@ -113,7 +113,7 @@ def generate_video(input_user: Input_User_Request):
     except:
         logger.info("An error happened when get content array as result of searching. Set content array empty")
         content = []
-    logger.info("Content: ", content)
+    # logger.info("Content: ", content)
 
     if input_user.campaign:
         iteration = 2
@@ -158,12 +158,14 @@ def generate_video(input_user: Input_User_Request):
         images = search_image(script['keyword'][0])
         random.shuffle(images)
 
+
         images = image_online_paths + images
+        logger.info(images)
 
         # movie = create_movie(create_scenes_data(script, images))
         # slide_content = movie
         slide_content=create_scenes_data(script, images)
-        movie = create_movie(slide_content)
+        movie = create_movie(slide_content, language=input_user.language)
         video = generate_video_from_json(movie)
         if video:
             result_json['videos'].append({"video": video,
